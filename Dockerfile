@@ -10,7 +10,7 @@ WORKDIR /tmp/
 RUN mvn package
 
 # Pull base image
-FROM openjdk:21-jre-alpine
+FROM openjdk:21-jdk
 
 # Maintainer
 LABEL maintainer="venkatesh.s@capestart.com"
