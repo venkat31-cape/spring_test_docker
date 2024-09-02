@@ -1,6 +1,6 @@
 # Maven build container
 
-FROM maven:3.8.5-openjdk-11 AS maven_build
+FROM maven:3.9.5-openjdk-11 AS maven_build
 
 COPY pom.xml /tmp/
 
@@ -12,7 +12,7 @@ RUN mvn package
 
 #pull base image
 
-FROM openjdk:21-jdk-slim
+FROM openjdk:21-jdk
 
 #maintainer
 MAINTAINER venkatesh.s@capestart.com
