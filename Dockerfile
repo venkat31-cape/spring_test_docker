@@ -12,16 +12,16 @@ RUN mvn package
 
 #pull base image
 
-FROM eclipse-temurin:11
+FROM openjdk:21.0.2-jdk-slim
 
 #maintainer
-MAINTAINER dstar55@yahoo.com
+MAINTAINER venkatesh.s@capestart.com
 #expose port 8080
 EXPOSE 8080
 
 #default command
-CMD java -jar /data/hello-world-0.1.0.jar
+CMD java -jar /data/venkat-0.0.1-SNAPSHOT.jar
 
 #copy hello world to docker image from builder image
 
-COPY --from=maven_build /tmp/target/hello-world-0.1.0.jar /data/hello-world-0.1.0.jar
+COPY --from=maven_build /tmp/target/venkat-0.0.1-SNAPSHOT.jar /data/venkat-0.0.1-SNAPSHOT.jar
