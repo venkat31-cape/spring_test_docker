@@ -1,5 +1,5 @@
 # Maven build container
-FROM maven:3.9.5-openjdk-21 AS maven_build
+FROM maven:3.8.4-jdk-21 AS maven_build
 
 # Copy Maven configuration and source code
 COPY pom.xml /tmp/
@@ -10,7 +10,7 @@ WORKDIR /tmp/
 RUN mvn package
 
 # Pull base image
-FROM openjdk:21-jdk
+FROM openjdk:21-jre-alpine
 
 # Maintainer
 LABEL maintainer="venkatesh.s@capestart.com"
