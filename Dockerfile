@@ -12,7 +12,7 @@ RUN mvn package
 
 #pull base image
 
-FROM openjdk:21.0.2-jdk-slim
+FROM openjdk:21-jdk-slim
 
 #maintainer
 MAINTAINER venkatesh.s@capestart.com
