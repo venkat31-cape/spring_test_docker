@@ -14,6 +14,15 @@ public class OrderEntity{
     private Long id;
     private String orderName;
     private Long orderType;
-    @Transient
     private String orderTypeDes;
+
+    @Override
+    public String toString() {
+        return "OrderEntity{" +
+                "id=" + id +
+                ", orderName='" + orderName + '\'' +
+                ", orderType=" + orderType +
+                ", orderTypeDes='" + orderTypeDes + '\'' +
+                '}';
+    }
 }

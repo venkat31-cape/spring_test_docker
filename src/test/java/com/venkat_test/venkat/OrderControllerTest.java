@@ -13,8 +13,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.CollectionUtils;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -30,7 +35,7 @@ class OrderControllerTest {
     private OrderEntityRepository orderEntityRepository;
 
     static {
-        MY_SQL_CONTAINER = new PostgreSQLContainer("mysql:latest");
+        MY_SQL_CONTAINER = new PostgreSQLContainer(DockerImageName.parse("postgres"));
         MY_SQL_CONTAINER.start();
     }
 
@@ -48,6 +53,7 @@ class OrderControllerTest {
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setOrderType(1L);
         orderEntity.setOrderName("order-1");
+        orderEntity.setOrderTypeDes("FullFilled");
         orderEntityRepository.save(orderEntity);
     }
     @AfterEach
@@ -83,9 +89,10 @@ class OrderControllerTest {
                 .is2xxSuccessful()
                 .expectBodyList(OrderEntity.class)
                 .consumeWith(listOfObject ->{
-                    var list  = listOfObject.getResponseBody();
-                    Assertions.assertTrue(list.size() == 1);
-                    Assertions.assertTrue(list.get(0).getOrderTypeDes().equals("FullFilled"));
+                    List<OrderEntity> list  = listOfObject.getResponseBody();
+                    Assertions.assertFalse(CollectionUtils.isEmpty(list));
+                    Assertions.assertNotNull(list.getFirst().getOrderTypeDes());
+                    Assertions.assertEquals("FullFilled", list.getFirst().getOrderTypeDes());
                 });
     }
 }
