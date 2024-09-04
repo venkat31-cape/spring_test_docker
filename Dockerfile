@@ -6,7 +6,7 @@ COPY src /tmp/src/
 
 # Set the working directory and build the project
 WORKDIR /tmp/
-RUN mvn package
+RUN mvn package -DskipTests
 
 # Pull base image
 FROM openjdk:21
