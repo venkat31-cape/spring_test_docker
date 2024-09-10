@@ -1,4 +1,5 @@
 package com.venkat_test.venkat.config;
+
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -9,13 +10,17 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RedisConfig {
-    @Value("${redis.url}")
+
+    @Value("${spring.redis.url}")
     private String redisUrl;
 
     @Bean
     public RedisClient redisClient() {
-        // Create a Redis client with SSL/TLS enabled
-        return RedisClient.create(redisUrl);
+        // Create RedisURI from the URL
+        RedisURI redisURI = RedisURI.create(redisUrl);
+
+        // Create RedisClient with the RedisURI
+        return RedisClient.create(redisURI);
     }
 
     @Bean

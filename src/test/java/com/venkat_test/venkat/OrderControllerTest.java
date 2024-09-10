@@ -14,7 +14,9 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.CollectionUtils;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
@@ -25,39 +27,49 @@ import java.util.List;
 @Testcontainers
 class OrderControllerTest {
 
-    static final PostgreSQLContainer MY_SQL_CONTAINER;
-
     @Autowired
     WebTestClient webTestClient;
 
     @Autowired
     private OrderEntityRepository orderEntityRepository;
 
-    static {
-        MY_SQL_CONTAINER = new PostgreSQLContainer(DockerImageName.parse("postgres"));
-        MY_SQL_CONTAINER.start();
-    }
+    @Container
+    static GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:latest"))
+            .withExposedPorts(6379);
+
+    @Container
+    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"));
 
     @DynamicPropertySource
-    static void configureTestProperties(DynamicPropertyRegistry registry){
-        registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.username", MY_SQL_CONTAINER::getUsername);
-        registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
-        registry.add("spring.jpa.hibernate.ddl-auto",() -> "create");
-
+    static void configureTestProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create");
+        registry.add("spring.redis.url", () -> String.format("redis://%s:%d", redis.getHost(), redis.getMappedPort(6379)));
     }
 
     @BeforeEach
-    public void beforeEach(){
+    public void beforeEach() {
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setOrderType(1L);
         orderEntity.setOrderName("order-1");
         orderEntity.setOrderTypeDes("FullFilled");
         orderEntityRepository.save(orderEntity);
     }
+
     @AfterEach
-    public void afterEach(){
+    public void afterEach() {
         orderEntityRepository.deleteAll();
+    }
+
+    @Test
+    void testContainer() {
+        try (GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse("alpine:latest"))
+                .withCommand("echo", "Hello World")) {
+            container.start();
+            System.out.println("Container started: " + container.getLogs());
+        }
     }
 
     @Test
@@ -74,7 +86,7 @@ class OrderControllerTest {
                 .expectStatus()
                 .is2xxSuccessful()
                 .expectBody(OrderEntity.class)
-                .consumeWith(orderentity -> Assertions.assertNotNull(orderentity.getResponseBody().getId()));
+                .consumeWith(orderEntityResponse -> Assertions.assertNotNull(orderEntityResponse.getResponseBody().getId()));
     }
 
     @Test
@@ -87,11 +99,11 @@ class OrderControllerTest {
                 .expectStatus()
                 .is2xxSuccessful()
                 .expectBodyList(OrderEntity.class)
-                .consumeWith(listOfObject ->{
-                    List<OrderEntity> list  = listOfObject.getResponseBody();
+                .consumeWith(response -> {
+                    List<OrderEntity> list = response.getResponseBody();
                     Assertions.assertFalse(CollectionUtils.isEmpty(list));
-                    Assertions.assertNotNull(list.getFirst().getOrderTypeDes());
-                    Assertions.assertEquals("FullFilled", list.getFirst().getOrderTypeDes());
+                    Assertions.assertNotNull(list.get(0).getOrderTypeDes());
+                    Assertions.assertEquals("FullFilled", list.get(0).getOrderTypeDes());
                 });
     }
 }
