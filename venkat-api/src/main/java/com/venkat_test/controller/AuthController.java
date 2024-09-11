@@ -3,6 +3,7 @@ import com.venkat_test.UserService;
 import com.venkat_test.dto.UserDto;
 import com.venkat_test.entity.User;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,9 +16,10 @@ import java.util.List;
 @Controller
 public class AuthController {
 
-    private UserService userService;
+    private final UserService userService;
 
-    public AuthController(UserService userService) {
+    @Autowired
+    public AuthController(final UserService userService) {
         this.userService = userService;
     }
 
