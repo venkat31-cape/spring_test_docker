@@ -1,4 +1,4 @@
-package com.venkat_test.venkat.entity;
+package com.venkat_test.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

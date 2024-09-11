@@ -1,5 +1,6 @@
-package com.venkat_test.venkat.controller;
-import com.venkat_test.venkat.service.RedisService;
+package com.venkat_test.controller;
+
+import com.venkat_test.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

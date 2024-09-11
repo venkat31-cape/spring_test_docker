@@ -1,14 +1,17 @@
+# Build stage
 FROM maven:3.9.8-eclipse-temurin-21 AS maven_build
 
-# Copy Maven configuration and source code
+# Copy the entire project directory structure into the build context
 COPY pom.xml /tmp/
-COPY src /tmp/src/
+COPY venkat-api /tmp/venkat-api
+COPY venkat-service /tmp/venkat-service
+COPY venkat-common /tmp/venkat-common
 
 # Set the working directory and build the project
 WORKDIR /tmp/
-RUN mvn package -DskipTests
+RUN mvn package -DskipTests -pl venkat-api -am
 
-# Pull base image
+# Runtime stage
 FROM openjdk:21
 
 # Maintainer
@@ -18,7 +21,7 @@ LABEL maintainer="venkatesh.s@capestart.com"
 EXPOSE 8080
 
 # Copy the JAR file from the Maven build container to the new image
-COPY --from=maven_build /tmp/target/venkat-0.0.1-SNAPSHOT.jar /data/venkat-0.0.1-SNAPSHOT.jar
+COPY --from=maven_build /tmp/venkat-api/target/venkat-api-0.0.1-SNAPSHOT.jar /data/venkat-api.jar
 
 # Default command to run the JAR file
-CMD ["java", "-jar", "/data/venkat-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/data/venkat-api.jar"]

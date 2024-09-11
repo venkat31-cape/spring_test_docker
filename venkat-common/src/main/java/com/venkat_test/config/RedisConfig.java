@@ -1,5 +1,4 @@
-package com.venkat_test.venkat.config;
-
+package com.venkat_test.config;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;

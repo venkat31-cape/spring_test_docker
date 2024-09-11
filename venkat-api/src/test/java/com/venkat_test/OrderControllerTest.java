@@ -1,7 +1,8 @@
-package com.venkat_test.venkat;
+package com.venkat_test;
 
-import com.venkat_test.venkat.entity.OrderEntity;
-import com.venkat_test.venkat.repository.OrderEntityRepository;
+
+import com.venkat_test.entity.OrderEntity;
+import com.venkat_test.repository.OrderRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ class OrderControllerTest {
     WebTestClient webTestClient;
 
     @Autowired
-    private OrderEntityRepository orderEntityRepository;
+    private OrderRepository orderRepository;
 
     @Container
     static GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:latest"))
@@ -55,12 +56,12 @@ class OrderControllerTest {
         orderEntity.setOrderType(1L);
         orderEntity.setOrderName("order-1");
         orderEntity.setOrderTypeDes("FullFilled");
-        orderEntityRepository.save(orderEntity);
+        orderRepository.save(orderEntity);
     }
 
     @AfterEach
     public void afterEach() {
-        orderEntityRepository.deleteAll();
+        orderRepository.deleteAll();
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.venkat_test.venkat;
+package com.venkat_test;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
