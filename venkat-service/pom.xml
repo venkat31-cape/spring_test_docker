@@ -6,7 +6,7 @@
     <artifactId>venkat-service</artifactId>
     <packaging>jar</packaging>
 
-    <name>Spring Boot Blank Project (from https://github.com/making/spring-boot-blank)</name>
+    <name>venkat-service</name>
 
     <parent>
         <groupId>com.venkat_test</groupId>
@@ -21,7 +21,14 @@
             <artifactId>venkat-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
